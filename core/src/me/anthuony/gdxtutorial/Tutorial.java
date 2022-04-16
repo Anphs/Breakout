@@ -15,10 +15,13 @@ public class Tutorial extends Game {
 	float ballBaseSpeed = 1;
 
 	public void reset () {
-		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed, ballBaseSpeed);
+		Random r = new Random();
+		float angle = (float) ((r.nextFloat() * (Math.PI/2f)) + (Math.PI/4f));
+		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed * (float)Math.cos(angle), ballBaseSpeed);
 
 		int blockWidth = 60;
 		int blockHeight = 20;
+		blocks.clear();
 		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + 10) {
 			for(int j = 10 + blockWidth / 2; j < Gdx.graphics.getWidth(); j += blockWidth + 10) {
 				blocks.add(new Block(j ,i, blockWidth, blockHeight));
@@ -29,7 +32,9 @@ public class Tutorial extends Game {
 	@Override
 	public void create () {
 		renderer = new ShapeRenderer();
-		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed, ballBaseSpeed);
+		Random r = new Random();
+		float angle = (float) ((r.nextFloat() * (Math.PI/2f)) + (Math.PI/4f));
+		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed * (float)Math.cos(angle), ballBaseSpeed);
 		paddle = new Paddle(Gdx.graphics.getWidth() / 2, 32, 100, 10);
 
 		int blockWidth = 60;
