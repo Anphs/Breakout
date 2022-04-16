@@ -2,6 +2,7 @@ package me.anthuony.gdxtutorial;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
 
@@ -19,11 +20,15 @@ public class Tutorial extends Game {
 		float angle = (float) ((r.nextFloat() * (Math.PI/2f)) + (Math.PI/4f));
 		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed * (float)Math.cos(angle), ballBaseSpeed);
 
-		int blockWidth = 60;
-		int blockHeight = 20;
+		int rowLength = 9;
+		int blockSpacing = (Gdx.graphics.getWidth() * 10) / 640;
+		int blockWidth = Gdx.graphics.getWidth() - blockSpacing;
+		blockWidth /= rowLength;
+		blockWidth -= blockSpacing;
+		int blockHeight = blockWidth / 3;
 		blocks.clear();
-		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + 10) {
-			for(int j = 10 + blockWidth / 2; j < Gdx.graphics.getWidth(); j += blockWidth + 10) {
+		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + blockSpacing) {
+			for(int j = blockSpacing + blockWidth / 2; j < Gdx.graphics.getWidth(); j += blockWidth + blockSpacing) {
 				blocks.add(new Block(j ,i, blockWidth, blockHeight));
 			}
 		}
@@ -32,18 +37,9 @@ public class Tutorial extends Game {
 	@Override
 	public void create () {
 		renderer = new ShapeRenderer();
-		Random r = new Random();
-		float angle = (float) ((r.nextFloat() * (Math.PI/2f)) + (Math.PI/4f));
-		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed * (float)Math.cos(angle), ballBaseSpeed);
 		paddle = new Paddle(Gdx.graphics.getWidth() / 2, 32, 100, 10);
 
-		int blockWidth = 60;
-		int blockHeight = 20;
-		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + 10) {
-			for(int j = 10 + blockWidth / 2; j < Gdx.graphics.getWidth(); j += blockWidth + 10) {
-				blocks.add(new Block(j ,i, blockWidth, blockHeight));
-			}
-		}
+		reset();
 	}
 
 	@Override
