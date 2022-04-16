@@ -4,22 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class Paddle {
-    int x;
-    int y;
-    int length;
-    int height;
+public class Paddle extends Rectangle {
     Color color = Color.WHITE;
 
     public Paddle(int x, int y, int length, int height) {
-        this.x = x;
-        this.y = y;
-        this.length = length;
-        this.height = height;
+        super(x, y, length, height);
     }
 
     public void update() {
         x = Gdx.input.getX();
+        //y = Gdx.graphics.getHeight() - Gdx.input.getY();
     }
 
     public void draw(ShapeRenderer renderer) {

@@ -2,22 +2,16 @@ package me.anthuony.gdxtutorial;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class Block {
-    int x;
-    int y;
-    int length;
-    int height;
+public class Block extends Rectangle {
+
     boolean destroyed = false;
 
     public Block(int x, int y, int length, int height) {
-        this.x = x;
-        this.y = y;
-        this.length = length;
-        this.height = height;
+        super(x, y, length, height);
     }
 
     public void draw(ShapeRenderer renderer) {
         if(destroyed) { return; }
-        renderer.rect(x, y, length, height);
+        renderer.rect(x - (length / 2f), y - (height / 2f), length, height);
     }
 }
