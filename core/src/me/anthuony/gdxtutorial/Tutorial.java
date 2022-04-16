@@ -46,7 +46,7 @@ public class Tutorial extends Game {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		renderer.begin(ShapeRenderer.ShapeType.Line);
 
-		ball.update();
+		ball.update(Gdx.graphics.getDeltaTime());
 		ball.checkCollision(paddle);
 		ball.draw(renderer);
 
@@ -64,7 +64,7 @@ public class Tutorial extends Game {
 			}
 		}
 
-		if(ball.y < ball.size) {
+		if(ball.y < ball.size || blocks.isEmpty()) {
 			reset();
 		}
 

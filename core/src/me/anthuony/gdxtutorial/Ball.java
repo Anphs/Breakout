@@ -21,9 +21,9 @@ public class Ball {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
     }
-    public void update() {
-        x += xSpeed;
-        y += ySpeed;
+    public void update(float deltaTime) {
+        x += xSpeed * deltaTime * 165;
+        y += ySpeed * deltaTime * 165;
         if(x < size|| x > (Gdx.graphics.getWidth() - size)) {
             xSpeed = -xSpeed;
         }
