@@ -6,7 +6,7 @@ public class Block extends Rectangle {
 
     boolean destroyed = false;
 
-    public Block(int x, int y, int length, int height) {
+    public Block(float x, float y, float length, float height) {
         super(x, y, length, height);
     }
 

@@ -2,7 +2,6 @@ package me.anthuony.gdxtutorial;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
 
@@ -37,7 +36,7 @@ public class Tutorial extends Game {
 	@Override
 	public void create () {
 		renderer = new ShapeRenderer();
-		paddle = new Paddle(Gdx.graphics.getWidth() / 2, 32, 100, 10);
+		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 100, 10);
 
 		reset();
 	}
@@ -63,6 +62,11 @@ public class Tutorial extends Game {
 			else {
 				block.draw(renderer);
 			}
+		}
+		for(Iterator<Block> iterator = blocks.iterator(); iterator.hasNext(); ) {
+			Block block = iterator.next();
+			ball.checkCollision(block);
+			if(block.destroyed) { iterator.remove(); }
 		}
 
 		if(ball.y < ball.size || blocks.isEmpty()) {

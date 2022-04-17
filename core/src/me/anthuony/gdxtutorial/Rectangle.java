@@ -1,12 +1,12 @@
 package me.anthuony.gdxtutorial;
 
 public abstract class Rectangle {
-    int x;
-    int y;
-    int length;
-    int height;
+    float x;
+    float y;
+    float length;
+    float height;
 
-    public Rectangle(int x, int y, int length, int height) {
+    public Rectangle(float x, float y, float length, float height) {
         this.x = x;
         this.y = y;
         this.length = length;

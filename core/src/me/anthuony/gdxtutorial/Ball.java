@@ -40,9 +40,6 @@ public class Ball {
         if(side != null) {
             changeDirection(side);
         }
-        else{
-            //color = Color.WHITE;
-        }
     }
     public void checkCollision(Block block) {
         if(!block.destroyed) {
