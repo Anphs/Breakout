@@ -24,8 +24,18 @@ public class Ball extends Circle {
     public void update(float deltaTime) {
         x += xSpeed * deltaTime * 165;
         y += ySpeed * deltaTime * 165;
-        if(x <= radius || x >= (Gdx.graphics.getWidth() - radius)) {
+        if(x <= radius) {
             xSpeed = -xSpeed;
+            Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
+            Vector2 bottomLeft = new Vector2(0, 0);
+            Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector);
+        }
+        else if(x >= (Gdx.graphics.getWidth() - radius)) {
+            xSpeed = -xSpeed;
+            Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
+            Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector);
+            applyMTV();
         }
         if(y >= (Gdx.graphics.getHeight() - radius)) {
             ySpeed = -ySpeed;
