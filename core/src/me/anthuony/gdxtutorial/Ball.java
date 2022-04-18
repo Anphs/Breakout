@@ -3,37 +3,41 @@ package me.anthuony.gdxtutorial;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
 
-public class Ball {
-    float x;
-    float y;
-    float size;
+public class Ball extends Circle {
     float xSpeed;
     float ySpeed;
     Color color = Color.WHITE;
+    Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
 
-    public Ball(float x, float y, float size, float xSpeed, float ySpeed) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
+    public Ball(float x, float y, float radius, float xSpeed, float ySpeed) {
+        super(x, y, radius);
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
     }
     public void update(float deltaTime) {
         x += xSpeed * deltaTime * 165;
         y += ySpeed * deltaTime * 165;
-        if(x < size|| x > (Gdx.graphics.getWidth() - size)) {
+        if(x <= radius || x >= (Gdx.graphics.getWidth() - radius)) {
             xSpeed = -xSpeed;
         }
-        if(y > (Gdx.graphics.getHeight() - size)) {
+        if(y >= (Gdx.graphics.getHeight() - radius)) {
             ySpeed = -ySpeed;
+            Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
+            Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector);
+            applyMTV();
         }
     }
     public void draw(ShapeRenderer renderer) {
         renderer.setColor(color);
-        renderer.circle(x, y, size);
+        renderer.circle(x, y, radius);
     }
     public void checkCollision(Paddle paddle) {
         Side side = collidesWith(paddle);
@@ -48,7 +52,7 @@ public class Ball {
                 changeDirection(side);
                 block.destroyed = true;
                 Random r = new Random();
-                color = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
+                color = new Color(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
                 if(xSpeed > 0) {
                     xSpeed += 0.05;
                 }
@@ -91,56 +95,62 @@ public class Ball {
             xSpeed = -xSpeed;
             ySpeed = -ySpeed;
         }
-        x += xSpeed;
-        y += ySpeed;
     }
     private Side collidesWith(Rectangle rect) {
-        boolean greaterThanLeftSide = rect.x - rect.length/2f <= x + size;
-        boolean lessThanRightSide = rect.x + rect.length/2f >= x - size;
-        boolean greaterThanBottom = rect.y - rect.height/2f <= y + size;
-        boolean lessThanTop = rect.y + rect.height/2f >= y - size;
-        if(greaterThanLeftSide && lessThanRightSide && greaterThanBottom && lessThanTop)
-        {
-            if(rect.x - rect.length/2f >= x + size) {
-                if(rect.y + rect.height/2f <= y)
-                {
-                    //color = Color.PINK;
-                    return Side.TOP_LEFT;
-                }
-                else if(rect.y - rect.height/2f >= y)
-                {
-                    //color = Color.SKY;
-                    return Side.BOTTOM_LEFT;
-                }
-                //color = Color.YELLOW;
-                return Side.LEFT;
-            }
-            else if(rect.x + rect.length/2f <= x - size)
+        if(Intersector.overlaps(this, rect)) {
+            Vector2 topLeft = new Vector2(rect.x, rect.y + rect.height);
+            Vector2 topRight = new Vector2(rect.x + rect.width, rect.y + rect.height);
+            Vector2 bottomLeft = new Vector2(rect.x, rect.y);
+            Vector2 bottomRight = new Vector2(rect.x + rect.width, rect.y);
+
+
+            if(Intersector.intersectSegmentCircle(topLeft, topLeft, this, minimumTranslationVector))
             {
-                if(rect.y + rect.height/2f <= y)
-                {
-                    //color = Color.BROWN;
-                    return Side.TOP_RIGHT;
-                }
-                else if(rect.y - rect.height/2f >= y)
-                {
-                    //color = Color.CHARTREUSE;
-                    return Side.BOTTOM_RIGHT;
-                }
-                //color = Color.ORANGE;
-                return Side.RIGHT;
+                applyMTV();
+                return Side.TOP_LEFT;
             }
-            else if(rect.y + rect.height/2f <= y)
+            else if(Intersector.intersectSegmentCircle(topRight, topRight, this, minimumTranslationVector))
             {
-                //color = Color.GREEN;
+                applyMTV();
+                return Side.TOP_RIGHT;
+            }
+            else if(Intersector.intersectSegmentCircle(bottomLeft, bottomLeft, this, minimumTranslationVector))
+            {
+                applyMTV();
+                return Side.BOTTOM_LEFT;
+            }
+            else if(Intersector.intersectSegmentCircle(bottomRight, bottomRight, this, minimumTranslationVector))
+            {
+                applyMTV();
+                return Side.BOTTOM_RIGHT;
+            }
+            else if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector))
+            {
+                applyMTV();
                 return Side.TOP;
             }
-            else if(rect.y - rect.height/2f >= y)
+            else if(Intersector.intersectSegmentCircle(bottomLeft, bottomRight, this, minimumTranslationVector))
             {
-                //color = Color.RED;
+                applyMTV();
                 return Side.BOTTOM;
+            }
+            else if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector))
+            {
+                applyMTV();
+                return Side.LEFT;
+            }
+            else if(Intersector.intersectSegmentCircle(bottomRight, topRight, this, minimumTranslationVector))
+            {
+                applyMTV();
+                return Side.RIGHT;
             }
         }
         return null;
+    }
+    private void applyMTV() {
+        Vector2 angle = minimumTranslationVector.normal.rotateDeg(180);
+        float distance = minimumTranslationVector.depth;
+        this.x += distance * Math.cos(angle.angleRad());
+        this.y += distance * Math.sin(angle.angleRad());
     }
 }

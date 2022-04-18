@@ -13,11 +13,13 @@ public class Tutorial extends Game {
 	Paddle paddle;
 	List<Block> blocks = new ArrayList<>();
 	float ballBaseSpeed = 1;
+	Random r = new Random();
 
 	public void reset () {
-		Random r = new Random();
 		float angle = (float) ((r.nextFloat() * (Math.PI/2f)) + (Math.PI/4f));
 		ball = new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f, 8, ballBaseSpeed * (float)Math.cos(angle), ballBaseSpeed);
+		//ball.xSpeed = 0;
+		//ball.ySpeed = 0;
 
 		int rowLength = 9;
 		int blockSpacing = (Gdx.graphics.getWidth() * 10) / 640;
@@ -27,7 +29,7 @@ public class Tutorial extends Game {
 		int blockHeight = blockWidth / 3;
 		blocks.clear();
 		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + blockSpacing) {
-			for(int j = blockSpacing + blockWidth / 2; j < Gdx.graphics.getWidth(); j += blockWidth + blockSpacing) {
+			for(int j = blockSpacing; j < Gdx.graphics.getWidth(); j += blockWidth + blockSpacing) {
 				blocks.add(new Block(j ,i, blockWidth, blockHeight));
 			}
 		}
@@ -69,7 +71,7 @@ public class Tutorial extends Game {
 			if(block.destroyed) { iterator.remove(); }
 		}
 
-		if(ball.y < ball.size || blocks.isEmpty()) {
+		if(ball.y < ball.radius || blocks.isEmpty()) {
 			reset();
 		}
 
