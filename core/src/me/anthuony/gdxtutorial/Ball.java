@@ -22,23 +22,26 @@ public class Ball extends Circle {
         this.ySpeed = ySpeed;
     }
     public void update(float deltaTime) {
-        x += xSpeed * deltaTime * 165;
-        y += ySpeed * deltaTime * 165;
+        x += xSpeed * deltaTime;
+        y += ySpeed * deltaTime;
         if(x <= radius) {
-            xSpeed = -xSpeed;
+            if(xSpeed < 0)
+                xSpeed = -xSpeed;
             Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
             Vector2 bottomLeft = new Vector2(0, 0);
             Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector);
         }
         else if(x >= (Gdx.graphics.getWidth() - radius)) {
-            xSpeed = -xSpeed;
+            if(xSpeed > 0)
+                xSpeed = -xSpeed;
             Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
             Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector);
             applyMTV();
         }
         if(y >= (Gdx.graphics.getHeight() - radius)) {
-            ySpeed = -ySpeed;
+            if(ySpeed > 0)
+                ySpeed = -ySpeed;
             Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
             Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector);
@@ -55,6 +58,12 @@ public class Ball extends Circle {
             changeDirection(side);
         }
     }
+    public void checkCollision(Ball ball) {
+        if(overlaps(ball)) {
+            xSpeed = -xSpeed;
+            ySpeed = -ySpeed;
+        }
+    }
     public void checkCollision(Block block) {
         if(!block.destroyed) {
             Side side = collidesWith(block);
@@ -64,18 +73,18 @@ public class Ball extends Circle {
                 Random r = new Random();
                 color = new Color(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
                 if(xSpeed > 0) {
-                    xSpeed += 0.05;
+                    xSpeed += 5;
                 }
                 else
                 {
-                    xSpeed -= 0.05;
+                    xSpeed -= 5;
                 }
                 if(ySpeed > 0) {
-                    ySpeed += 0.05;
+                    ySpeed += 5;
                 }
                 else
                 {
-                    ySpeed -= 0.05;
+                    ySpeed -= 5;
                 }
             }
         }
