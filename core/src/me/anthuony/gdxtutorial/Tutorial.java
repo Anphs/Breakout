@@ -15,7 +15,7 @@ public class Tutorial extends Game {
 	List<Block> blocks = new ArrayList<>();
 	float ballBaseSpeed = 200;
 	Random r = new Random();
-	int numBalls = 2;
+	int numBalls = 1;
 
 	public void reset () {
 		while(balls.size() < numBalls)
