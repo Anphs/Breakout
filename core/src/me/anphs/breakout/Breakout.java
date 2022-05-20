@@ -42,7 +42,7 @@ public class Breakout extends Game {
 			Ball ball = balls.get(i);
 			float angle = (r.nextFloat() - 0.5f) * 2f;
 			ball.setX(Gdx.graphics.getWidth() / 2f);
-			ball.setY(Gdx.graphics.getHeight() / 4f - i * 32);
+			ball.setY(paddle.getY() + paddle.height + ball.radius + i * ball.radius * 2);
 			ball.setXSpeed(BALL_BASE_SPEED * angle);
 			ball.setYSpeed(BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f));
 		}
@@ -66,7 +66,7 @@ public class Breakout extends Game {
 	@Override
 	public void create () {
 		renderer = new ShapeRenderer();
-		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 100, 10);
+		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 150, 10);
 		r = new Random();
 		balls = new Array<>();
 		blocks = new Array<>();

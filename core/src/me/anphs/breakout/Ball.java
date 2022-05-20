@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 
@@ -12,14 +13,14 @@ import java.util.Random;
 
 public class Ball extends Circle implements Pool.Poolable
 {
-    private float xSpeed;
-    private float ySpeed;
+    private final Vector2 velocity;
     private final Color color = new Color(1, 1, 1, 1);
     private final Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
     private static final Random r = new Random();
     Vector2 screenTopLeft, screenTopRight, screenBottomRight, screenBottomLeft;
     
     public Ball() {
+        velocity = new Vector2(0, 0);
         screenTopLeft = new Vector2(0, Gdx.graphics.getHeight());
         screenTopRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         screenBottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
@@ -27,23 +28,23 @@ public class Ball extends Circle implements Pool.Poolable
     }
     
     public void update(float deltaTime) {
-        x += xSpeed * deltaTime;
-        y += ySpeed * deltaTime;
+        x += velocity.x * deltaTime;
+        y += velocity.y * deltaTime;
         
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenBottomLeft, this, minimumTranslationVector)) {
             applyMTV(Side.RIGHT);
-            if(xSpeed < 0)
-                xSpeed = -xSpeed;
+            if(velocity.x < 0)
+                velocity.x = -velocity.x;
         }
         else if(Intersector.intersectSegmentCircle(screenTopRight, screenBottomRight, this, minimumTranslationVector)) {
             applyMTV(Side.LEFT);
-            if(xSpeed > 0)
-                xSpeed = -xSpeed;
+            if(velocity.x > 0)
+                velocity.x = -velocity.x;
         }
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenTopRight, this, minimumTranslationVector)) {
             applyMTV(Side.BOTTOM);
-            if(ySpeed > 0)
-                ySpeed = -ySpeed;
+            if(velocity.y > 0)
+                velocity.y = -velocity.y;
         }
     }
     public void draw(ShapeRenderer renderer) {
@@ -53,18 +54,24 @@ public class Ball extends Circle implements Pool.Poolable
     public void checkCollision(Paddle paddle) {
         Side side = collidesWith(paddle);
         if(side != null) {
-            changeDirection(side);
+            if(side == Side.TOP || side == Side.TOP_RIGHT || side == Side.TOP_LEFT) {
+                float newAngle = MathUtils.atan2(y - (paddle.y + paddle.height/2f), x - (paddle.x + paddle.width/2f)) * (180 / MathUtils.PI);
+                velocity.setAngleDeg(MathUtils.clamp(newAngle, 30, 150));
+            }
+            else {
+                changeDirection(side);
+            }
         }
     }
     public void checkCollision(Ball otherBall) {
         if(overlaps(otherBall)) {
-            if(xSpeed / otherBall.xSpeed < 0) {
-                xSpeed = -xSpeed;
-                otherBall.xSpeed = -otherBall.xSpeed;
+            if(velocity.x / otherBall.velocity.x < 0) {
+                velocity.x = -velocity.x;
+                otherBall.velocity.x = -otherBall.velocity.x;
             }
-            if(ySpeed / otherBall.ySpeed < 0) {
-                ySpeed = -ySpeed;
-                otherBall.ySpeed = -otherBall.ySpeed;
+            if(velocity.y / otherBall.velocity.y < 0) {
+                velocity.y = -velocity.y;
+                otherBall.velocity.y = -otherBall.velocity.y;
             }
         }
     }
@@ -75,47 +82,47 @@ public class Ball extends Circle implements Pool.Poolable
                 changeDirection(side);
                 block.destroyed = true;
                 color.set(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
-                if(xSpeed > 0) {
-                    xSpeed += 5;
+                if(velocity.x > 0) {
+                    velocity.x += 5;
                 }
                 else
                 {
-                    xSpeed -= 5;
+                    velocity.x -= 5;
                 }
-                if(ySpeed > 0) {
-                    ySpeed += 5;
+                if(velocity.y > 0) {
+                    velocity.y += 5;
                 }
                 else
                 {
-                    ySpeed -= 5;
+                    velocity.y -= 5;
                 }
             }
         }
     }
     public void changeDirection(Side side) {
         if(side == Side.LEFT || side == Side.TOP_LEFT || side == Side.BOTTOM_LEFT) {
-            if(xSpeed > 0) {
-                xSpeed = -xSpeed;
+            if(velocity.x > 0) {
+                velocity.x = -velocity.x;
             }
         }
         else if(side == Side.RIGHT || side == Side.TOP_RIGHT || side == Side.BOTTOM_RIGHT) {
-            if(xSpeed < 0) {
-                xSpeed = -xSpeed;
+            if(velocity.x < 0) {
+                velocity.x = -velocity.x;
             }
         }
         if(side == Side.TOP || side == Side.TOP_RIGHT || side == Side.TOP_LEFT) {
-            if(ySpeed < 0) {
-                ySpeed = -ySpeed;
+            if(velocity.y < 0) {
+                velocity.y = -velocity.y;
             }
         }
         else if(side == Side.BOTTOM || side == Side.BOTTOM_RIGHT || side == Side.BOTTOM_LEFT) {
-            if(ySpeed > 0) {
-                ySpeed = -ySpeed;
+            if(velocity.y > 0) {
+                velocity.y = -velocity.y;
             }
         }
         else {
-            xSpeed = -xSpeed;
-            ySpeed = -ySpeed;
+            velocity.x = -velocity.x;
+            velocity.y = -velocity.y;
         }
     }
     private Side collidesWith(Rectangle rect) {
@@ -194,27 +201,26 @@ public class Ball extends Circle implements Pool.Poolable
                     angle.rotateDeg(90);
             }
         }
-        System.out.println(side + " " + angle.angleDeg());
         this.x += distance * Math.cos(angle.angleRad());
         this.y += distance * Math.sin(angle.angleRad());
     }
     
     public void setXSpeed(float xSpeed)
     {
-        this.xSpeed = xSpeed;
+        this.velocity.x = xSpeed;
     }
     
     public void setYSpeed(float ySpeed)
     {
-        this.ySpeed = ySpeed;
+        this.velocity.y = ySpeed;
     }
     
     public void init(float x, float y, float radius, float xSpeed, float ySpeed) {
         this.setX(x);
         this.setY(y);
         this.setRadius(radius);
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
+        this.velocity.x = xSpeed;
+        this.velocity.y = ySpeed;
     }
     
     @Override
