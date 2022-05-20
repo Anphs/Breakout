@@ -1,4 +1,4 @@
-package me.anthuony.gdxtutorial;
+package me.anthuony.breakout;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;

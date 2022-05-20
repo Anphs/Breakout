@@ -1,11 +1,10 @@
-package me.anthuony.gdxtutorial;
+package me.anthuony.breakout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 
@@ -18,29 +17,30 @@ public class Ball extends Circle implements Pool.Poolable
     private final Color color = new Color(1, 1, 1, 1);
     private final Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
     private static final Random r = new Random();
-
+    Vector2 screenTopLeft, screenTopRight, screenBottomRight, screenBottomLeft;
     
-    public Ball() {}
+    public Ball() {
+        screenTopLeft = new Vector2(0, Gdx.graphics.getHeight());
+        screenTopRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        screenBottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
+        screenBottomLeft = new Vector2(0, 0);
+    }
     
     public void update(float deltaTime) {
         x += xSpeed * deltaTime;
         y += ySpeed * deltaTime;
-        Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
-        Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
-        Vector2 bottomLeft = new Vector2(0, 0);
         
-        if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector)) {
+        if(Intersector.intersectSegmentCircle(screenTopLeft, screenBottomLeft, this, minimumTranslationVector)) {
             applyMTV();
             if(xSpeed < 0)
                 xSpeed = -xSpeed;
         }
-        else if(Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector)) {
+        else if(Intersector.intersectSegmentCircle(screenTopRight, screenBottomRight, this, minimumTranslationVector)) {
             applyMTV();
             if(xSpeed > 0)
                 xSpeed = -xSpeed;
         }
-        if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector)) {
+        if(Intersector.intersectSegmentCircle(screenTopLeft, screenTopRight, this, minimumTranslationVector)) {
             applyMTV();
             if(ySpeed > 0)
                 ySpeed = -ySpeed;
@@ -120,47 +120,42 @@ public class Ball extends Circle implements Pool.Poolable
     }
     private Side collidesWith(Rectangle rect) {
         if(Intersector.overlaps(this, rect)) {
-            Vector2 topLeft = new Vector2(rect.x, rect.y + rect.height);
-            Vector2 topRight = new Vector2(rect.x + rect.width, rect.y + rect.height);
-            Vector2 bottomLeft = new Vector2(rect.x, rect.y);
-            Vector2 bottomRight = new Vector2(rect.x + rect.width, rect.y);
-
-            if(Intersector.intersectSegmentCircle(topLeft, topLeft, this, minimumTranslationVector))
+            if(Intersector.intersectSegmentCircle(rect.topLeft, rect.topLeft, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.TOP_LEFT;
             }
-            else if(Intersector.intersectSegmentCircle(topRight, topRight, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.topRight, rect.topRight, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.TOP_RIGHT;
             }
-            else if(Intersector.intersectSegmentCircle(bottomLeft, bottomLeft, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.bottomLeft, rect.bottomLeft, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.BOTTOM_LEFT;
             }
-            else if(Intersector.intersectSegmentCircle(bottomRight, bottomRight, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.bottomRight, rect.bottomRight, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.BOTTOM_RIGHT;
             }
-            else if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.topLeft, rect.topRight, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.TOP;
             }
-            else if(Intersector.intersectSegmentCircle(bottomLeft, bottomRight, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.bottomLeft, rect.bottomRight, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.BOTTOM;
             }
-            else if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.topLeft, rect.bottomLeft, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.LEFT;
             }
-            else if(Intersector.intersectSegmentCircle(bottomRight, topRight, this, minimumTranslationVector))
+            else if(Intersector.intersectSegmentCircle(rect.bottomRight, rect.topRight, this, minimumTranslationVector))
             {
                 applyMTV();
                 return Side.RIGHT;

@@ -1,8 +1,7 @@
-package me.anthuony.gdxtutorial;
+package me.anthuony.breakout;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 public class Block extends Rectangle implements Pool.Poolable
@@ -13,10 +12,7 @@ public class Block extends Rectangle implements Pool.Poolable
     public Block() { super(); destroyed = false; }
     
     public void init(float x, float y, float width, float height) {
-        this.setX(x);
-        this.setY(y);
-        this.setWidth(width);
-        this.setHeight(height);
+        super.init(x, y, width, height);
     }
 
     public void draw(ShapeRenderer renderer) {
@@ -28,10 +24,7 @@ public class Block extends Rectangle implements Pool.Poolable
     @Override
     public void reset()
     {
-        this.setX(0);
-        this.setY(0);
-        this.setWidth(0);
-        this.setHeight(0);
+        super.reset();
         destroyed = false;
     }
 }

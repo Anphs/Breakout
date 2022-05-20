@@ -1,9 +1,8 @@
-package me.anthuony.gdxtutorial;
+package me.anthuony.breakout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Paddle extends Rectangle {
     private final Color color = Color.WHITE;
@@ -13,8 +12,7 @@ public class Paddle extends Rectangle {
     }
 
     public void update() {
-        x = Gdx.input.getX() - width/2f;
-        x = clamp(x, 0.01f, Gdx.graphics.getWidth() - width);
+        setX(clamp(Gdx.input.getX() - width/2f, 0.01f, Gdx.graphics.getWidth() - width));
         //y = Gdx.graphics.getHeight() - Gdx.input.getY() - height/2f;
     }
 

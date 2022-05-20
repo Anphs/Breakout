@@ -1,4 +1,4 @@
-package me.anthuony.gdxtutorial;
+package me.anthuony.breakout;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
