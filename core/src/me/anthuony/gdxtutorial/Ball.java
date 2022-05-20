@@ -7,21 +7,21 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Pool;
 
 import java.util.Random;
 
-public class Ball extends Circle {
+public class Ball extends Circle implements Pool.Poolable
+{
     private float xSpeed;
     private float ySpeed;
-    private final Color color = new Color(1, 1, 1, 1);;
+    private final Color color = new Color(1, 1, 1, 1);
     private final Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
     private static final Random r = new Random();
 
-    public Ball(float x, float y, float radius, float xSpeed, float ySpeed) {
-        super(x, y, radius);
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
-    }
+    
+    public Ball() {}
+    
     public void update(float deltaTime) {
         x += xSpeed * deltaTime;
         y += ySpeed * deltaTime;
@@ -183,5 +183,24 @@ public class Ball extends Circle {
     public void setYSpeed(float ySpeed)
     {
         this.ySpeed = ySpeed;
+    }
+    
+    public void init(float x, float y, float radius, float xSpeed, float ySpeed) {
+        this.setX(x);
+        this.setY(y);
+        this.setRadius(radius);
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+    }
+    
+    @Override
+    public void reset()
+    {
+        this.setX(0);
+        this.setY(0);
+        this.setRadius(0);
+        this.setXSpeed(0);
+        this.setYSpeed(0);
+        this.color.set(1, 1, 1, 1);
     }
 }

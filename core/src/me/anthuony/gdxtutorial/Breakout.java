@@ -11,13 +11,14 @@ import com.badlogic.gdx.utils.Pools;
 import java.util.*;
 
 public class Breakout extends Game {
-	private final float BALL_BASE_SPEED = 200;
+	private static final float BALL_BASE_SPEED = 200;
 	private int numBalls = 1;
 	
 	private ShapeRenderer renderer;
 	private Paddle paddle;
 	private Random r;
 	private Array<Ball> balls;
+	private Pool<Ball> ballPool;
 	private Array<Block> blocks;
 	private Pool<Block> blockPool;
 
@@ -31,8 +32,11 @@ public class Breakout extends Game {
 	}
 	
 	private void reset () {
-		while(balls.size < numBalls)
-			balls.add(new Ball(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 8, BALL_BASE_SPEED, BALL_BASE_SPEED));
+		while(balls.size < numBalls) {
+			Ball ball = ballPool.obtain();
+			ball.init(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 8, BALL_BASE_SPEED, BALL_BASE_SPEED);
+			balls.add(ball);
+		}
 
 		for(int i = 0; i < balls.size; i++) {
 			Ball ball = balls.get(i);
@@ -66,6 +70,7 @@ public class Breakout extends Game {
 		r = new Random();
 		balls = new Array<>();
 		blocks = new Array<>();
+		ballPool = Pools.get(Ball.class);
 		blockPool = Pools.get(Block.class);
 		reset();
 	}
