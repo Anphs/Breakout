@@ -29,24 +29,33 @@ public class Ball extends Circle {
                 xSpeed = -xSpeed;
             Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
             Vector2 bottomLeft = new Vector2(0, 0);
-            Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector);
+            if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector))
+                applyMTV();
         }
         else if(x >= (Gdx.graphics.getWidth() - radius)) {
             if(xSpeed > 0)
                 xSpeed = -xSpeed;
             Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
-            Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector);
-            applyMTV();
+            if(Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector))
+                applyMTV();
         }
         if(y >= (Gdx.graphics.getHeight() - radius)) {
             if(ySpeed > 0)
                 ySpeed = -ySpeed;
             Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
             Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector);
-            applyMTV();
+            if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector))
+                applyMTV();
         }
+        /*else if(y <= radius) {
+            if(ySpeed < 0)
+                ySpeed = -ySpeed;
+            Vector2 bottomLeft = new Vector2(0, 0);
+            Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
+            if(Intersector.intersectSegmentCircle(bottomLeft, bottomRight, this, minimumTranslationVector))
+                applyMTV();
+        }*/
     }
     public void draw(ShapeRenderer renderer) {
         renderer.setColor(color);

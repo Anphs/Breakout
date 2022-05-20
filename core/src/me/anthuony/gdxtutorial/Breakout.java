@@ -5,25 +5,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.*;
 
-public class Tutorial extends Game {
+public class Breakout extends Game {
+	final float BALL_BASE_SPEED = 200;
+	int numBalls = 1;
+	
 	ShapeRenderer renderer;
 	Paddle paddle;
-	List<Ball> balls = new ArrayList<>();
-	List<Block> blocks = new ArrayList<>();
-	float ballBaseSpeed = 200;
-	Random r = new Random();
-	int numBalls = 1;
+	Array<Ball> balls;
+	Array<Block> blocks;
+	Random r;
 
-	public void reset () {
-		while(balls.size() < numBalls)
+	private void reset () {
+		while(balls.size < numBalls)
 			balls.add(null);
 
-		for(int i = 0; i < balls.size(); i++) {
+		for(int i = 0; i < balls.size; i++) {
 			float angle = (r.nextFloat() - 0.5f) * 2f;
-			balls.set(i, new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f - i * 32, 8, ballBaseSpeed * angle, ballBaseSpeed + ballBaseSpeed * (i * .2f)));
+			balls.set(i, new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f - i * 32, 8, BALL_BASE_SPEED * angle, BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f)));
 		}
 
 		int rowLength = 9;
@@ -44,9 +46,9 @@ public class Tutorial extends Game {
 	public void create () {
 		renderer = new ShapeRenderer();
 		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 100, 10);
-
-		balls.add(null);
-
+		balls = new Array<>();
+		blocks = new Array<>();
+		r = new Random();
 		reset();
 	}
 
@@ -59,31 +61,30 @@ public class Tutorial extends Game {
 		paddle.draw(renderer);
 
 		for(Ball ball : balls) {
-			ball.update(Gdx.graphics.getDeltaTime());
-			ball.checkCollision(paddle);
-			for(Ball otherBall : balls) {
-				if(otherBall != ball) {
-					ball.checkCollision(otherBall);
-				}
-			}
-			ball.draw(renderer);
 			if(ball.y < ball.radius) {
 				reset();
 				break;
 			}
+			ball.update(Gdx.graphics.getDeltaTime());
+			ball.checkCollision(paddle);
+			for(Iterator<Block> iterator = blocks.iterator(); iterator.hasNext();) {
+				Block block = iterator.next();
+				ball.checkCollision(block);
+				if(block.destroyed)
+					iterator.remove();
+			}
+			for(int i = 0; i < balls.size; i++) {
+				Ball otherBall = balls.get(i);
+				if(otherBall != ball)
+					ball.checkCollision(otherBall);
+			}
+			
+			ball.draw(renderer);
 		}
 
 		renderer.setColor(Color.WHITE);
-		for(Iterator<Block> iterator = blocks.iterator(); iterator.hasNext(); ) {
-			Block block = iterator.next();
-			for(Ball ball : balls) {
-				ball.checkCollision(block);
-			}
-			if(block.destroyed)
-				iterator.remove();
-			else
-				block.draw(renderer);
-		}
+		for(Block block : blocks)
+			block.draw(renderer);
 
 		if(blocks.isEmpty()) {
 			numBalls++;
@@ -91,11 +92,6 @@ public class Tutorial extends Game {
 		}
 
 		renderer.end();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
 	}
 
 }
