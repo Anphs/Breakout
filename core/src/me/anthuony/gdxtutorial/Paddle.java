@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Paddle extends Rectangle {
-    Color color = Color.WHITE;
+    private final Color color = Color.WHITE;
 
     public Paddle(float x, float y, float width, float height) {
         super(x, y, width, height);

@@ -11,10 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.Random;
 
 public class Ball extends Circle {
-    float xSpeed;
-    float ySpeed;
-    Color color = Color.WHITE;
-    Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
+    private float xSpeed;
+    private float ySpeed;
+    private final Color color = new Color(1, 1, 1, 1);;
+    private final Intersector.MinimumTranslationVector minimumTranslationVector = new Intersector.MinimumTranslationVector();
+    private static final Random r = new Random();
 
     public Ball(float x, float y, float radius, float xSpeed, float ySpeed) {
         super(x, y, radius);
@@ -24,38 +25,26 @@ public class Ball extends Circle {
     public void update(float deltaTime) {
         x += xSpeed * deltaTime;
         y += ySpeed * deltaTime;
-        if(x <= radius) {
+        Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
+        Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
+        Vector2 bottomLeft = new Vector2(0, 0);
+        
+        if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector)) {
+            applyMTV();
             if(xSpeed < 0)
                 xSpeed = -xSpeed;
-            Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
-            Vector2 bottomLeft = new Vector2(0, 0);
-            if(Intersector.intersectSegmentCircle(topLeft, bottomLeft, this, minimumTranslationVector))
-                applyMTV();
         }
-        else if(x >= (Gdx.graphics.getWidth() - radius)) {
+        else if(Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector)) {
+            applyMTV();
             if(xSpeed > 0)
                 xSpeed = -xSpeed;
-            Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
-            if(Intersector.intersectSegmentCircle(topRight, bottomRight, this, minimumTranslationVector))
-                applyMTV();
         }
-        if(y >= (Gdx.graphics.getHeight() - radius)) {
+        if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector)) {
+            applyMTV();
             if(ySpeed > 0)
                 ySpeed = -ySpeed;
-            Vector2 topLeft = new Vector2(0, Gdx.graphics.getHeight());
-            Vector2 topRight = new Vector2(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            if(Intersector.intersectSegmentCircle(topLeft, topRight, this, minimumTranslationVector))
-                applyMTV();
         }
-        /*else if(y <= radius) {
-            if(ySpeed < 0)
-                ySpeed = -ySpeed;
-            Vector2 bottomLeft = new Vector2(0, 0);
-            Vector2 bottomRight = new Vector2(Gdx.graphics.getWidth(), 0);
-            if(Intersector.intersectSegmentCircle(bottomLeft, bottomRight, this, minimumTranslationVector))
-                applyMTV();
-        }*/
     }
     public void draw(ShapeRenderer renderer) {
         renderer.setColor(color);
@@ -79,8 +68,7 @@ public class Ball extends Circle {
             if(side != null) {
                 changeDirection(side);
                 block.destroyed = true;
-                Random r = new Random();
-                color = new Color(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
+                color.set(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
                 if(xSpeed > 0) {
                     xSpeed += 5;
                 }
@@ -131,7 +119,6 @@ public class Ball extends Circle {
             Vector2 bottomLeft = new Vector2(rect.x, rect.y);
             Vector2 bottomRight = new Vector2(rect.x + rect.width, rect.y);
 
-
             if(Intersector.intersectSegmentCircle(topLeft, topLeft, this, minimumTranslationVector))
             {
                 applyMTV();
@@ -180,5 +167,15 @@ public class Ball extends Circle {
         float distance = minimumTranslationVector.depth;
         this.x += distance * Math.cos(angle.angleRad());
         this.y += distance * Math.sin(angle.angleRad());
+    }
+    
+    public void setXSpeed(float xSpeed)
+    {
+        this.xSpeed = xSpeed;
+    }
+    
+    public void setYSpeed(float ySpeed)
+    {
+        this.ySpeed = ySpeed;
     }
 }

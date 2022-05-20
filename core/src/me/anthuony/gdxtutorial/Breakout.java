@@ -10,22 +10,26 @@ import com.badlogic.gdx.utils.Array;
 import java.util.*;
 
 public class Breakout extends Game {
-	final float BALL_BASE_SPEED = 200;
-	int numBalls = 1;
+	private final float BALL_BASE_SPEED = 200;
+	private int numBalls = 1;
 	
-	ShapeRenderer renderer;
-	Paddle paddle;
-	Array<Ball> balls;
-	Array<Block> blocks;
-	Random r;
+	private ShapeRenderer renderer;
+	private Paddle paddle;
+	private Array<Ball> balls;
+	private Array<Block> blocks;
+	private Random r;
 
 	private void reset () {
 		while(balls.size < numBalls)
-			balls.add(null);
+			balls.add(new Ball(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 8, BALL_BASE_SPEED, BALL_BASE_SPEED));
 
 		for(int i = 0; i < balls.size; i++) {
+			Ball ball = balls.get(i);
 			float angle = (r.nextFloat() - 0.5f) * 2f;
-			balls.set(i, new Ball(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 4f - i * 32, 8, BALL_BASE_SPEED * angle, BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f)));
+			ball.setX(Gdx.graphics.getWidth() / 2f);
+			ball.setY(Gdx.graphics.getHeight() / 4f - i * 32);
+			ball.setXSpeed(BALL_BASE_SPEED * angle);
+			ball.setYSpeed(BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f));
 		}
 
 		int rowLength = 9;
@@ -81,8 +85,7 @@ public class Breakout extends Game {
 			
 			ball.draw(renderer);
 		}
-
-		renderer.setColor(Color.WHITE);
+		
 		for(Block block : blocks)
 			block.draw(renderer);
 
