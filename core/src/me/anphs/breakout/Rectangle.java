@@ -1,4 +1,4 @@
-package me.anthuony.breakout;
+package me.anphs.breakout;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
@@ -51,6 +51,12 @@ class Rectangle extends com.badlogic.gdx.math.Rectangle implements Pool.Poolable
     
     public Rectangle setX(float x) {
         this.x = x;
+        updateCorners();
+        return this;
+    }
+    
+    public Rectangle setY(float y) {
+        this.y = y;
         updateCorners();
         return this;
     }

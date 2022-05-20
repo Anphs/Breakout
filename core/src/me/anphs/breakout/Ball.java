@@ -1,4 +1,4 @@
-package me.anthuony.breakout;
+package me.anphs.breakout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -31,17 +31,17 @@ public class Ball extends Circle implements Pool.Poolable
         y += ySpeed * deltaTime;
         
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenBottomLeft, this, minimumTranslationVector)) {
-            applyMTV();
+            applyMTV(Side.RIGHT);
             if(xSpeed < 0)
                 xSpeed = -xSpeed;
         }
         else if(Intersector.intersectSegmentCircle(screenTopRight, screenBottomRight, this, minimumTranslationVector)) {
-            applyMTV();
+            applyMTV(Side.LEFT);
             if(xSpeed > 0)
                 xSpeed = -xSpeed;
         }
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenTopRight, this, minimumTranslationVector)) {
-            applyMTV();
+            applyMTV(Side.BOTTOM);
             if(ySpeed > 0)
                 ySpeed = -ySpeed;
         }
@@ -122,50 +122,79 @@ public class Ball extends Circle implements Pool.Poolable
         if(Intersector.overlaps(this, rect)) {
             if(Intersector.intersectSegmentCircle(rect.topLeft, rect.topLeft, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.TOP_LEFT);
                 return Side.TOP_LEFT;
             }
             else if(Intersector.intersectSegmentCircle(rect.topRight, rect.topRight, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.TOP_RIGHT);
                 return Side.TOP_RIGHT;
             }
             else if(Intersector.intersectSegmentCircle(rect.bottomLeft, rect.bottomLeft, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.BOTTOM_LEFT);
                 return Side.BOTTOM_LEFT;
             }
             else if(Intersector.intersectSegmentCircle(rect.bottomRight, rect.bottomRight, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.BOTTOM_RIGHT);
                 return Side.BOTTOM_RIGHT;
             }
             else if(Intersector.intersectSegmentCircle(rect.topLeft, rect.topRight, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.TOP);
                 return Side.TOP;
             }
             else if(Intersector.intersectSegmentCircle(rect.bottomLeft, rect.bottomRight, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.BOTTOM);
                 return Side.BOTTOM;
             }
             else if(Intersector.intersectSegmentCircle(rect.topLeft, rect.bottomLeft, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.LEFT);
                 return Side.LEFT;
             }
             else if(Intersector.intersectSegmentCircle(rect.bottomRight, rect.topRight, this, minimumTranslationVector))
             {
-                applyMTV();
+                applyMTV(Side.RIGHT);
                 return Side.RIGHT;
             }
         }
         return null;
     }
-    private void applyMTV() {
-        Vector2 angle = minimumTranslationVector.normal.rotateDeg(180);
+    private void applyMTV(Side side) {
+        Vector2 angle = minimumTranslationVector.normal;
         float distance = minimumTranslationVector.depth;
+        if(side == Side.LEFT || side == Side.TOP_LEFT || side == Side.BOTTOM_LEFT) {
+            if(!(angle.angleDeg() >= 90 && angle.angleDeg() <= 270))
+                angle.rotateDeg(180);
+        }
+        else if(side == Side.RIGHT || side == Side.TOP_RIGHT || side == Side.BOTTOM_RIGHT) {
+            if(angle.angleDeg() >= 90 && angle.angleDeg() <= 270)
+                angle.rotateDeg(180);
+        }
+        if(side == Side.TOP || side == Side.TOP_RIGHT || side == Side.TOP_LEFT) {
+            if(angle.angleDeg() >= 180)
+            {
+                angle.rotateDeg(180);
+                if(side == Side.TOP_LEFT)
+                    angle.rotateDeg(90);
+                else if(side == Side.TOP_RIGHT)
+                    angle.rotateDeg(-90);
+            }
+        }
+        else if(side == Side.BOTTOM || side == Side.BOTTOM_RIGHT || side == Side.BOTTOM_LEFT) {
+            if(angle.angleDeg() <= 180)
+            {
+                angle.rotateDeg(180);
+                if(side == Side.BOTTOM_LEFT)
+                    angle.rotateDeg(-90);
+                else if(side == Side.BOTTOM_RIGHT)
+                    angle.rotateDeg(90);
+            }
+        }
+        System.out.println(side + " " + angle.angleDeg());
         this.x += distance * Math.cos(angle.angleRad());
         this.y += distance * Math.sin(angle.angleRad());
     }

@@ -1,4 +1,4 @@
-package me.anthuony.breakout;
+package me.anphs.breakout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +13,7 @@ public class Paddle extends Rectangle {
 
     public void update() {
         setX(clamp(Gdx.input.getX() - width/2f, 0.01f, Gdx.graphics.getWidth() - width));
-        //y = Gdx.graphics.getHeight() - Gdx.input.getY() - height/2f;
+        //setY(Gdx.graphics.getHeight() - Gdx.input.getY() - height/2f);
     }
 
     public void draw(ShapeRenderer renderer) {
