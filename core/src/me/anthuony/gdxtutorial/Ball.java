@@ -56,10 +56,16 @@ public class Ball extends Circle {
             changeDirection(side);
         }
     }
-    public void checkCollision(Ball ball) {
-        if(overlaps(ball)) {
-            xSpeed = -xSpeed;
-            ySpeed = -ySpeed;
+    public void checkCollision(Ball otherBall) {
+        if(overlaps(otherBall)) {
+            if(xSpeed / otherBall.xSpeed < 0) {
+                xSpeed = -xSpeed;
+                otherBall.xSpeed = -otherBall.xSpeed;
+            }
+            if(ySpeed / otherBall.ySpeed < 0) {
+                ySpeed = -ySpeed;
+                otherBall.ySpeed = -otherBall.ySpeed;
+            }
         }
     }
     public void checkCollision(Block block) {
