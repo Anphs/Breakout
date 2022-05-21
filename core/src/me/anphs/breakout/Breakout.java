@@ -2,6 +2,7 @@ package me.anphs.breakout;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
@@ -21,6 +22,7 @@ public class Breakout extends Game {
 	private Pool<Ball> ballPool;
 	private Array<Block> blocks;
 	private Pool<Block> blockPool;
+	private Sound paddleSound, wallSound, blockSound, loseSound;
 
 	private void clearBlocks() {
 		for (Array.ArrayIterator<Block> iterator = blocks.iterator(); iterator.hasNext(); )
@@ -65,6 +67,11 @@ public class Breakout extends Game {
 
 	@Override
 	public void create () {
+		paddleSound = Gdx.audio.newSound(Gdx.files.internal("paddle.wav"));
+		wallSound = Gdx.audio.newSound(Gdx.files.internal("wall.wav"));
+		blockSound = Gdx.audio.newSound(Gdx.files.internal("block.wav"));
+		loseSound = Gdx.audio.newSound(Gdx.files.internal("lose.wav"));
+		
 		renderer = new ShapeRenderer();
 		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 150, 10);
 		r = new Random();
@@ -86,15 +93,20 @@ public class Breakout extends Game {
 		for(int i = 0; i < balls.size; i++) {
 			Ball ball = balls.get(i);
 			if(ball.y < ball.radius) {
+				loseSound.play(1.0f);
 				reset();
 				break;
 			}
+			if(ball.checkWallCollision())
+				wallSound.play(1.0f);
 			ball.update(Gdx.graphics.getDeltaTime());
-			ball.checkCollision(paddle);
+			if(ball.checkCollision(paddle))
+				paddleSound.play(1.0f);
 			for(Iterator<Block> iterator = blocks.iterator(); iterator.hasNext();) {
 				Block block = iterator.next();
 				ball.checkCollision(block);
 				if(block.destroyed) {
+					blockSound.play(1.0f);
 					iterator.remove();
 					blockPool.free(block);
 				}
@@ -115,5 +127,10 @@ public class Breakout extends Game {
 
 		renderer.end();
 	}
-
+	
+	@Override
+	public void dispose()
+	{
+		super.dispose();
+	}
 }

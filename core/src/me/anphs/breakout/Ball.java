@@ -30,28 +30,33 @@ public class Ball extends Circle implements Pool.Poolable
     public void update(float deltaTime) {
         x += velocity.x * deltaTime;
         y += velocity.y * deltaTime;
-        
+    }
+    public boolean checkWallCollision() {
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenBottomLeft, this, minimumTranslationVector)) {
             applyMTV(Side.RIGHT);
             if(velocity.x < 0)
                 velocity.x = -velocity.x;
+            return true;
         }
         else if(Intersector.intersectSegmentCircle(screenTopRight, screenBottomRight, this, minimumTranslationVector)) {
             applyMTV(Side.LEFT);
             if(velocity.x > 0)
                 velocity.x = -velocity.x;
+            return true;
         }
         if(Intersector.intersectSegmentCircle(screenTopLeft, screenTopRight, this, minimumTranslationVector)) {
             applyMTV(Side.BOTTOM);
             if(velocity.y > 0)
                 velocity.y = -velocity.y;
+            return true;
         }
+        return false;
     }
     public void draw(ShapeRenderer renderer) {
         renderer.setColor(color);
         renderer.circle(x, y, radius);
     }
-    public void checkCollision(Paddle paddle) {
+    public boolean checkCollision(Paddle paddle) {
         Side side = collidesWith(paddle);
         if(side != null) {
             if(side == Side.TOP || side == Side.TOP_RIGHT || side == Side.TOP_LEFT) {
@@ -61,7 +66,9 @@ public class Ball extends Circle implements Pool.Poolable
             else {
                 changeDirection(side);
             }
+            return true;
         }
+        return false;
     }
     public void checkCollision(Ball otherBall) {
         if(overlaps(otherBall)) {
