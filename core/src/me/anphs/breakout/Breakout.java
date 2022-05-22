@@ -12,7 +12,8 @@ import com.badlogic.gdx.utils.Pools;
 import java.util.*;
 
 public class Breakout extends Game {
-	private static final float BALL_BASE_SPEED = 200;
+	private static final float BALL_BASE_SPEED = 300;
+	private static final int PADDLE_WIDTH = 100;
 	private int numBalls = 1;
 	
 	private ShapeRenderer renderer;
@@ -56,7 +57,7 @@ public class Breakout extends Game {
 		blockWidth -= blockSpacing;
 		int blockHeight = blockWidth / 3;
 		clearBlocks();
-		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight(); i += blockHeight + blockSpacing) {
+		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight() * .8f; i += blockHeight + blockSpacing) {
 			for(int j = blockSpacing; j < Gdx.graphics.getWidth(); j += blockWidth + blockSpacing) {
 				Block block = blockPool.obtain();
 				block.init(j ,i, blockWidth, blockHeight);
@@ -73,7 +74,7 @@ public class Breakout extends Game {
 		loseSound = Gdx.audio.newSound(Gdx.files.internal("lose.wav"));
 		
 		renderer = new ShapeRenderer();
-		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, 150, 10);
+		paddle = new Paddle(Gdx.graphics.getWidth() / 2f, 32, PADDLE_WIDTH, 10);
 		r = new Random();
 		balls = new Array<>();
 		blocks = new Array<>();
