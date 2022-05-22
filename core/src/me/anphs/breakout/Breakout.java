@@ -14,7 +14,7 @@ import java.util.*;
 public class Breakout extends Game {
 	private static final float BALL_BASE_SPEED = 300;
 	private static final int PADDLE_WIDTH = 100;
-	private int numBalls = 1;
+	private int numBalls = 2;
 	
 	private ShapeRenderer renderer;
 	private Paddle paddle;
@@ -23,7 +23,7 @@ public class Breakout extends Game {
 	private Pool<Ball> ballPool;
 	private Array<Block> blocks;
 	private Pool<Block> blockPool;
-	private Sound paddleSound, wallSound, blockSound, loseSound;
+	private Sound ballSound, paddleSound, wallSound, blockSound, loseSound;
 
 	private void clearBlocks() {
 		for (Array.ArrayIterator<Block> iterator = blocks.iterator(); iterator.hasNext(); )
@@ -45,7 +45,7 @@ public class Breakout extends Game {
 			Ball ball = balls.get(i);
 			float angle = (r.nextFloat() - 0.5f) * 2f;
 			ball.setX(Gdx.graphics.getWidth() / 2f);
-			ball.setY(paddle.getY() + paddle.height + ball.radius + i * ball.radius * 2);
+			ball.setY(paddle.getY() + paddle.height + ball.radius + i * ball.radius * 2.5f);
 			ball.setXSpeed(BALL_BASE_SPEED * angle);
 			ball.setYSpeed(BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f));
 		}
@@ -68,6 +68,7 @@ public class Breakout extends Game {
 
 	@Override
 	public void create () {
+		ballSound = Gdx.audio.newSound(Gdx.files.internal("ball.wav"));
 		paddleSound = Gdx.audio.newSound(Gdx.files.internal("paddle.wav"));
 		wallSound = Gdx.audio.newSound(Gdx.files.internal("wall.wav"));
 		blockSound = Gdx.audio.newSound(Gdx.files.internal("block.wav"));
@@ -113,7 +114,8 @@ public class Breakout extends Game {
 				}
 			}
 			for(int j = i + 1; j < balls.size; j++)
-				ball.checkCollision(balls.get(j));
+				if(ball.checkCollision(balls.get(j)))
+					ballSound.play(1.0f);
 			
 			ball.draw(renderer);
 		}

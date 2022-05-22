@@ -2,7 +2,6 @@ package me.anphs.breakout;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Pool;
 
 public class Block extends Rectangle implements Pool.Poolable

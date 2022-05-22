@@ -70,7 +70,7 @@ public class Ball extends Circle implements Pool.Poolable
         }
         return false;
     }
-    public void checkCollision(Ball otherBall) {
+    public boolean checkCollision(Ball otherBall) {
         if(overlaps(otherBall)) {
             if(velocity.x / otherBall.velocity.x < 0) {
                 velocity.x = -velocity.x;
@@ -80,7 +80,9 @@ public class Ball extends Circle implements Pool.Poolable
                 velocity.y = -velocity.y;
                 otherBall.velocity.y = -otherBall.velocity.y;
             }
+            return true;
         }
+        return false;
     }
     public void checkCollision(Block block) {
         if(!block.destroyed) {
