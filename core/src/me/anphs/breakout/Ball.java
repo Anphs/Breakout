@@ -80,6 +80,12 @@ public class Ball extends Circle implements Pool.Poolable
                 velocity.y = -velocity.y;
                 otherBall.velocity.y = -otherBall.velocity.y;
             }
+            float separationDistance = Vector2.dst(this.x, this.y, otherBall.x, otherBall.y)/2f + 0.001f;
+            float separationAngle = MathUtils.atan2(this.y - otherBall.y, this.x - otherBall.x);
+            this.x += separationDistance * Math.cos(separationAngle);
+            this.y += separationDistance * Math.sin(separationAngle);
+            otherBall.x -= separationDistance * Math.cos(separationAngle);
+            otherBall.y -= separationDistance * Math.sin(separationAngle);
             return true;
         }
         return false;
@@ -214,16 +220,6 @@ public class Ball extends Circle implements Pool.Poolable
         this.y += distance * Math.sin(angle.angleRad());
     }
     
-    public void setXSpeed(float xSpeed)
-    {
-        this.velocity.x = xSpeed;
-    }
-    
-    public void setYSpeed(float ySpeed)
-    {
-        this.velocity.y = ySpeed;
-    }
-    
     public void init(float x, float y, float radius, float xSpeed, float ySpeed) {
         this.setX(x);
         this.setY(y);
@@ -242,4 +238,15 @@ public class Ball extends Circle implements Pool.Poolable
         this.setYSpeed(0);
         this.color.set(1, 1, 1, 1);
     }
+    
+    public void setXSpeed(float xSpeed)
+    {
+        this.velocity.x = xSpeed;
+    }
+    
+    public void setYSpeed(float ySpeed)
+    {
+        this.velocity.y = ySpeed;
+    }
+    
 }

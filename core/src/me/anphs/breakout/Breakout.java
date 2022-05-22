@@ -14,7 +14,7 @@ import java.util.*;
 public class Breakout extends Game {
 	private static final float BALL_BASE_SPEED = 300;
 	private static final int PADDLE_WIDTH = 100;
-	private int numBalls = 2;
+	private int numBalls = 1;
 	
 	private ShapeRenderer renderer;
 	private Paddle paddle;
