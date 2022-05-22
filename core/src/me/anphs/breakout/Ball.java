@@ -98,18 +98,18 @@ public class Ball extends Circle implements Pool.Poolable
                 block.destroyed = true;
                 color.set(r.nextFloat() + .2f, r.nextFloat() + .2f, r.nextFloat() + .2f, 1);
                 if(velocity.x > 0) {
-                    velocity.x += 10;
+                    velocity.x += 4;
                 }
                 else
                 {
-                    velocity.x -= 10;
+                    velocity.x -= 4;
                 }
                 if(velocity.y > 0) {
-                    velocity.y += 3;
+                    velocity.y += 1;
                 }
                 else
                 {
-                    velocity.y -= 3;
+                    velocity.y -= 1;
                 }
             }
         }

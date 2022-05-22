@@ -14,7 +14,7 @@ public class DesktopLauncher {
 		//config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		config.setResizable(false);
 		//config.useVsync(true);
-		config.setWindowedMode(640, 720);
+		config.setWindowedMode(1280, 720);
 		new Lwjgl3Application(new Breakout(), config);
 	}
 }

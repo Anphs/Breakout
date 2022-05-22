@@ -4,16 +4,20 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.*;
 
 public class Breakout extends Game {
 	private static final float BALL_BASE_SPEED = 300;
 	private static final int PADDLE_WIDTH = 100;
+	private static final int rowLength = 16;
+	private static final float blockSpacing = 8;
+	private static final float blockHeight = 20;
+	
 	private int numBalls = 1;
 	
 	private ShapeRenderer renderer;
@@ -49,16 +53,11 @@ public class Breakout extends Game {
 			ball.setXSpeed(BALL_BASE_SPEED * angle);
 			ball.setYSpeed(BALL_BASE_SPEED + BALL_BASE_SPEED * (i * .2f));
 		}
-
-		int rowLength = 9;
-		int blockSpacing = (Gdx.graphics.getWidth() * 10) / 640;
-		int blockWidth = Gdx.graphics.getWidth() - blockSpacing;
-		blockWidth /= rowLength;
-		blockWidth -= blockSpacing;
-		int blockHeight = blockWidth / 3;
+		
+		float blockWidth = (Gdx.graphics.getWidth() - blockSpacing) /rowLength - blockSpacing;
 		clearBlocks();
-		for(int i = Gdx.graphics.getHeight() / 2; i < Gdx.graphics.getHeight() * .8f; i += blockHeight + blockSpacing) {
-			for(int j = blockSpacing; j < Gdx.graphics.getWidth(); j += blockWidth + blockSpacing) {
+		for(float i = Gdx.graphics.getHeight() / 2f; i < Gdx.graphics.getHeight() * .8f; i += blockHeight + blockSpacing) {
+			for(float j = blockSpacing; j < Gdx.graphics.getWidth() - blockSpacing; j += blockWidth + blockSpacing) {
 				Block block = blockPool.obtain();
 				block.init(j ,i, blockWidth, blockHeight);
 				blocks.add(block);
@@ -86,8 +85,8 @@ public class Breakout extends Game {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		renderer.begin(ShapeRenderer.ShapeType.Line);
+		ScreenUtils.clear(0, 0, 0.1f, 1);
+		renderer.begin(ShapeRenderer.ShapeType.Filled);
 
 		paddle.update();
 		paddle.draw(renderer);
